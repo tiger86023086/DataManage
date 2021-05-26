@@ -29,48 +29,78 @@ import xlwt
 import dataxlsread
 import mapread
 import datacsvread
+import  traceback
 
 def xlswrite(mapdict,datadict,flagrov,filepath):
 
-    workbook = xlwt.Workbook(encoding = 'utf-8')
-    worksheet = workbook.add_sheet('datasheet')
-    
-    loopnumcol = 0
-    datalen = 10000000
+    try:
 
-    listdatakey=list()
-
-    #if flagrov:#romove more data
-    for mykey in list(mapdict.keys()):
-        loopnumrow = 0
-        datakey = mapdict[mykey]
-
-        if datakey in list(datadict.keys()):
-            listdatakey.append(datakey)
-            mydata = datadict[datakey]
-            datalentemp = len(mydata)
-            if datalentemp < datalen:
-                datalen = datalentemp
-
-    for datakey in listdatakey:
-        loopnumrow = 0
+        workbook = xlwt.Workbook(encoding = 'utf-8')
+        worksheet = workbook.add_sheet('datasheet')
         
-        mydata = datadict[datakey]
-        worksheet.write(loopnumrow,loopnumcol,datakey)
-        loopnumrow = loopnumrow+1
+        loopnumcol = 0
+        datalen = 10000000
 
-        if flagrov:
+        #listdatakey=list()
 
-            while loopnumrow<datalen:
-                worksheet.write(loopnumrow,loopnumcol,mydata[loopnumrow])
+        #if flagrov:#romove more data
+        for mykey in list(mapdict.keys()):
+            loopnumrow = 0
+            datakey = mapdict[mykey]
+
+            if datakey in list(datadict.keys()):
+                
+                #listdatakey.append(datakey)
+                mydata = datadict[datakey]
+                datalentemp = len(mydata)
+                if datalentemp < datalen:
+                    datalen = datalentemp
+##            else:
+##                
+##                listdatakey.append(mykey)
+##                mydata = [0]*20000#temporary ,no work
+                
+                
+
+        for mykey in list(mapdict.keys()):
+            loopnumrow = 0
+            #print(mykey)
+            datakey = mapdict[mykey]
+
+            if datakey in list(datadict.keys()):
+                mydata = datadict[datakey]
+                 
+                worksheet.write(loopnumrow,loopnumcol,mykey)
                 loopnumrow = loopnumrow+1
-            loopnumcol =loopnumcol+1
-        else:
-            for data in mydata:
-                 worksheet.write(loopnumrow,loopnumcol,data)
-                 loopnumrow = loopnumrow+1
-            loopnumcol =loopnumcol+1
-    workbook.save(filepath+'\\Excel_DB.xls')
+                
+
+                if flagrov:
+
+                    while loopnumrow<=datalen:
+                        worksheet.write(loopnumrow,loopnumcol,mydata[loopnumrow-1])
+                        loopnumrow = loopnumrow+1
+                    loopnumcol =loopnumcol+1
+                else:
+                    for data in mydata:
+                         worksheet.write(loopnumrow,loopnumcol,data)
+                         loopnumrow = loopnumrow+1
+                    loopnumcol =loopnumcol+1
+            else:
+                worksheet.write(loopnumrow,loopnumcol,mykey)
+##                loopnumrow = loopnumrow+1
+##
+##                if flagrov:
+##
+##                    while loopnumrow<datalen:
+##                        worksheet.write(loopnumrow,loopnumcol,0)
+##                        loopnumrow = loopnumrow+1
+                loopnumcol =loopnumcol+1  
+                
+                
+        workbook.save(filepath+'\\Excel_DB.xls')
+    except Exception as e:
+        dblistmsgbox = traceback.print_exc()
+        print(dblistmsgbox)
 ##
 ##    dbfile_display = 'save dbfile in: '+filepath+'\Excel_DB.xls'
 ##    print(dbfile_display)
@@ -81,6 +111,7 @@ def xlswrite(mapdict,datadict,flagrov,filepath):
 if __name__=='__main__':
     import window_f
     import mapread
+    from filter_file import filter_file
 
     oldpath=os.getcwd()
 
@@ -114,11 +145,11 @@ if __name__=='__main__':
 
     #print(datadict)
 
-
+    filepath = 'E:\\Project\\ProCCMTest\\DataManage'
     mapfile = testinfo.select_file('select map','xls')
     #print(mapfile)
     
     mapdict = mapread.mapread(mapfile)
     #print(mapdict)
 
-    xlswrite(mapdict,datadict,True)
+    xlswrite(mapdict,datadict,True,filepath)
