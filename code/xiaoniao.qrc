@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="xiaoniao">
+    <file>myico.ico</file>
+  </qresource>
+</RCC>
